@@ -2,7 +2,7 @@
 
 So your corporate network team has blocked a common desktop from remote access. Or you need to peer into a network for work purposes (of course) while they've sealed off every port to it without considering how that impacts your team. Or you feel like shells or REPL consoles need to be multiplayer. Whatever the case is, I'm not responsible for how you choose to use this or whether your enterprisey ass gets fired for entertaining the thought of using this.
 
-All it is, is yet another web console. There are seriously tonnes of these things around. I just made one for the heck of it. 
+All it is, is yet another web console. There are seriously tonnes of these things around. I just made one for the heck of it. Probably the only difference between this and the rest is the use of Docker containers for shell and REPL access.
 
 ## Features
 
