@@ -1,0 +1,42 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* UI Kit overrides*/
+.uk-progress-mini {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.uk-alert {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0.5rem;
+}
+
+.uk-alert-close {
+  top: 0.8rem;
+}
+
+.uk-progress {
+  margin-top: 0;
+  margin-bottom: 0;
+  height: 4px;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+#terminal {
+  width: 100%;
+  height: 95%;
+  background-color: black;
+}
+
+#status-bar {
+  width: 100%;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles/uikit.css" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <script src="/scripts/uikit.js"></script>
+    <script src="/scripts/uikit-icons.js"></script>
+  </head>
+  <body class="uk-light uk-background-secondary">
+    <div class="uk-container">
+      <div class="uk-position-center">
+        <h1 class="uk-heading-medium uk-margin">Remote Console Login</h1>
+        <form action="/login" method="post" class="uk-form uk-form-stacked uk-margin">
+          <div id="console-type" class="uk-margin">
+            <label for="console-type" class="uk-form-label">Console Type</label>
+            <select name="consoleType" id="console-type" class="uk-select">
+              {{shells}}
+            </select>
+          </div>
+          <div id="username" class="uk-margin">
+            <label for="username" class="uk-form-label">User</label>
+            <input type="text" name="username" class="uk-input" autofocus />
+          </div>
+          <div id="password" class="uk-margin">
+            <label for="password" class="uk-form-label">Password</label>
+            <input type="password" name="password" class="uk-input" />
+          </div>
+          <input type="hidden" name="_csrf" value="{{csrftoken}}" />
+          <input type="submit" value="Login" class="uk-button uk-button-primary" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

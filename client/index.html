@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Console</title>
+    <link rel="stylesheet" href="/styles/uikit.css" />
+    <link rel="stylesheet" href="/styles/xterm.css" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <script src="/scripts/uikit.js"></script>
+    <script src="/scripts/uikit-icons.js"></script>
+  </head>
+  <body>
+    <div class="container uk-flex uk-flex-column uk-light uk-background-secondary">
+      <div id="terminal" class="uk-flex-auto"></div>
+      <progress id="js-progressbar" class="uk-flex-none uk-progress" value="0" max="100" hidden></progress>
+      <div id="status-bar" class="uk-flex uk-flex-none">
+        <div id="status" class="uk-flex-auto uk-text-center"></div>
+        <div id="form-logout" class="uk-flex-none uk-text-center">
+          <form action="/logout?_method=delete" method="post">
+            <button type="submit" class="uk-button uk-button-secondary">Logout</button>
+          </form>
+        </div>
+        <div class="uk-flex-none uk-text-center">
+          <form
+            class="js-upload"
+            id="form-upload"
+            action="/uploads"
+            enctype="multipart/form-data"
+            method="post"
+            uk-form-custom
+          >
+            <input id="file-upload" type="file" name="file-to-upload" />
+            <input id="btn-upload" type="submit" value="Upload" class="uk-button uk-button-default" />
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="/scripts/xterm.js"></script>
+    <script src="/scripts/xterm-addon-attach.js"></script>
+    <script src="/scripts/xterm-addon-fit.js"></script>
+    <script src="/scripts/xterm-addon-search.js"></script>
+    <script src="/scripts/xterm-addon-web-links.js"></script>
+    <script src="/scripts/main.js"></script>
+  </body>
+</html>
