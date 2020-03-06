@@ -1,6 +1,3 @@
 node_modules
-credentials/*
 build
-uploads/*
-staging/*
 .idea

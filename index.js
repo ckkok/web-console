@@ -1,72 +1,71 @@
 /**
  * To generate a password for this console, run `node generate_credentials.js username password`
  */
-const allowedUser = require('./credentials/user.json');
+const allowedUser = require("./credentials/user.json");
 
 /**
  * Application constants
  */
 const PORT = 8081;
-const HOST = '0.0.0.0';
+const HOST = "0.0.0.0";
 const HEARTBEAT_INTERVAL = 30000;
 const MAX_CONNECTIONS = 1;
-const KEY_FILE = 'key.pem';
-const CERT_FILE = 'cert.pem';
-const PASSPHRASE = 'supersecret';
-const USER_SESSION_COOKIE = 'connect.sid';
-const LOGIN_ROUTE = '/login';
+const KEY_FILE = "key.pem";
+const CERT_FILE = "cert.pem";
+const PASSPHRASE = "supersecret";
+const USER_SESSION_COOKIE = "connect.sid";
+const LOGIN_ROUTE = "/login";
 const TIMEOUT_DURATION = 10000;
 
 /**
  * Application dependency imports
  */
-const express = require('express');
-const session = require('express-session');
-const helmet = require('helmet');
-const csrf = require('csurf');
-const MemoryStore = require('memorystore')(session);
-const cookieParser = require('cookie-parser');
-const methodOverride = require('method-override');
-const bcrypt = require('bcryptjs');
-const WebSocket = require('ws');
-const https = require('https');
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
-// const pty = require('node-pty');
-const Multer = require('multer');
-const Docker = require('dockerode');
-const tar = require('tar');
+const express = require("express");
+const session = require("express-session");
+const helmet = require("helmet");
+const csrf = require("csurf");
+const MemoryStore = require("memorystore")(session);
+const cookieParser = require("cookie-parser");
+const methodOverride = require("method-override");
+const bcrypt = require("bcryptjs");
+const WebSocket = require("ws");
+const https = require("https");
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
+const Multer = require("multer");
+const Docker = require("dockerode");
+const tar = require("tar");
 
 const docker = new Docker();
-
 
 /**
  * Default to CMD on Windows since PowerShell is not always available
  */
-const shell = os.platform() === 'win32' ? 'cmd.exe' : 'bash';
+const shell = os.platform() === "win32" ? "cmd.exe" : "bash";
 const shells = {
   shell: {
-    image: 'ubuntu',
-    command: '/bin/bash'
+    image: "ubuntu",
+    command: "/bin/bash"
   },
   java: {
-    image: 'adoptopenjdk:11.0.6_10-jdk-hotspot-bionic',
-    command: 'jshell'
+    image: "adoptopenjdk:11.0.6_10-jdk-hotspot-bionic",
+    command: "jshell"
   },
   node: {
-    image: 'node:lts-alpine',
-    command: 'node'
+    image: "node:lts-alpine",
+    command: "node"
   },
   python: {
-    image: 'python:3.8-alpine',
-    command: 'python'
+    image: "python:3.8-alpine",
+    command: "python"
   }
 };
 
-const homeDir = os.platform() === 'win32' ? process.env['USERPROFILE'] : process.env['HOME'];
-const uploadDir = path.resolve(__dirname, 'uploads');
-const stagingDir = path.resolve(__dirname, 'staging');
+const homeDir =
+  os.platform() === "win32" ? process.env["USERPROFILE"] : process.env["HOME"];
+const uploadDir = path.resolve(__dirname, "uploads");
+const stagingDir = path.resolve(__dirname, "staging");
 let current_connections = 0;
 
 // File upload middleware for handling multipart/form-data
@@ -79,19 +78,25 @@ const upload = Multer({
 
 // Https server credentials. You don't want to transmit SSH key files as unencrypted plain text after all
 const serverOpts = {
-  key: fs.readFileSync(path.resolve(__dirname, 'credentials', KEY_FILE)),
-  cert: fs.readFileSync(path.resolve(__dirname, 'credentials', CERT_FILE)),
+  key: fs.readFileSync(path.resolve(__dirname, "credentials", KEY_FILE)),
+  cert: fs.readFileSync(path.resolve(__dirname, "credentials", CERT_FILE)),
   passphrase: PASSPHRASE
 };
 
 // Read the login page as a string so that the CSRF token can be injected via String.prototype.replace later.
 // I'm not going to introduce a templating engine for 1 string replacement...
-const loginPage = fs.readFileSync(path.resolve(__dirname, 'login', 'index.html'), 'utf8').replace(
-  '{{shells}}',
-  Object.keys(shells)
-    .map(shell => `<option value="${shell}">${shell.charAt(0).toUpperCase() + shell.slice(1)}</option>`)
-    .join('\n')
-);
+const loginPage = fs
+  .readFileSync(path.resolve(__dirname, "login", "index.html"), "utf8")
+  .replace(
+    "{{shells}}",
+    Object.keys(shells)
+      .map(
+        shell =>
+          `<option value="${shell}">${shell.charAt(0).toUpperCase() +
+            shell.slice(1)}</option>`
+      )
+      .join("\n")
+  );
 
 const app = express();
 const terminals = {};
@@ -99,11 +104,11 @@ const socketIdsAllowed = new Set();
 const disconnectTimers = {};
 const allowedPaths = new Set([
   LOGIN_ROUTE,
-  '/logout',
-  '/styles/uikit.css',
-  '/styles/main.css',
-  '/scripts/uikit.js',
-  '/scripts/uikit-icons.js'
+  "/logout",
+  "/styles/uikit.css",
+  "/styles/main.css",
+  "/scripts/uikit.js",
+  "/scripts/uikit-icons.js"
 ]);
 
 const cookieParserMiddleware = cookieParser();
@@ -111,7 +116,7 @@ const memorystore = new MemoryStore({
   checkPeriod: 600000
 });
 const sessionMiddleware = session({
-  secret: 'superdupersecret',
+  secret: "superdupersecret",
   resave: true,
   saveUninitialized: true,
   store: memorystore,
@@ -123,67 +128,83 @@ const sessionMiddleware = session({
 });
 const csrfMiddleware = csrf({ cookie: true });
 
-app.enable('trust proxy');
+app.enable("trust proxy");
 app.use(helmet());
-app.use(methodOverride('_method'));
+app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParserMiddleware);
-app.use(['/', '/login'], sessionMiddleware);
+app.use(["/", "/login"], sessionMiddleware);
 
 app.get(LOGIN_ROUTE, csrfMiddleware, (req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  res.send(loginPage.replace('{{csrftoken}}', req.csrfToken())); // Not gonna bring in a whole templating engine for this
+  res.setHeader("Content-Type", "text/html");
+  res.send(loginPage.replace("{{csrftoken}}", req.csrfToken())); // Not gonna bring in a whole templating engine for this
 });
-app.delete('/logout', (req, res) => {
+app.delete("/logout", (req, res) => {
   if (req.session) {
     req.session.destroy(noop);
     res.clearCookie(USER_SESSION_COOKIE);
   }
-  res.clearCookie('console');
-  res.redirect('/login');
+  res.clearCookie("console");
+  res.redirect("/login");
 });
-app.post('/uploads', checkCredentials, upload.single('files[]'), (req, res) => {
+app.post("/uploads", checkCredentials, upload.single("files[]"), (req, res) => {
   const remoteIp = getRemoteIp(req);
   if (!req.file || !req.file.filename || !terminals[remoteIp]) {
-    return res.status(500).json({ status: 'Unable to receive file' });
+    return res.status(500).json({ status: "Unable to receive file" });
   }
   const container = terminals[remoteIp].container;
   const filePath = path.relative(__dirname, req.file.path);
   const fileName = req.file.filename;
-  const archiveFile = path.resolve(stagingDir, fileName + '.gz');
+  const archiveFile = path.resolve(stagingDir, fileName + ".gz");
   tar
-    .c({ gzip: true, file: archiveFile, preservePaths: false, cwd: uploadDir }, [fileName])
-    .then(_ => container.putArchive(archiveFile, { path: '/' }))
-    .then(_ => res.status(201).json({ status: 'received', file: req.file.filename, size: req.file.size }))
+    .c(
+      { gzip: true, file: archiveFile, preservePaths: false, cwd: uploadDir },
+      [fileName]
+    )
+    .then(_ => container.putArchive(archiveFile, { path: "/" }))
+    .then(_ =>
+      res.status(201).json({
+        status: "received",
+        file: req.file.filename,
+        size: req.file.size
+      })
+    )
     .then(_ => {
       fs.unlink(filePath, noop);
       fs.unlink(archiveFile, noop);
     });
 });
-app.post('/resize', checkCredentials, (req, res) => {
+app.post("/resize", checkCredentials, (req, res) => {
   const remoteIp = getRemoteIp(req);
-  const { cols, rows } = req.body;
   if (!terminals[remoteIp]) {
     return res.end();
   }
+  const { cols, rows } = req.body;
   terminals[remoteIp].sessionTerminal.resize(cols, rows);
   res.end();
 });
 
 // EVERYTHING BELOW THIS LINE IS CONNECTION LIMITED
 app.use(connectionLimit(MAX_CONNECTIONS));
-app.use('/', checkCredentials, express.static(path.resolve(__dirname, 'client')));
+app.use(
+  "/",
+  checkCredentials,
+  express.static(path.resolve(__dirname, "client"))
+);
 app.post(LOGIN_ROUTE, csrfMiddleware, (req, res) => {
   if (!req.session || !req.cookies[USER_SESSION_COOKIE]) {
     return res.redirect(LOGIN_ROUTE);
   }
   const { username, password, consoleType } = req.body;
-  if (username === allowedUser.username && bcrypt.compareSync(password, allowedUser.password)) {
+  if (
+    username === allowedUser.username &&
+    bcrypt.compareSync(password, allowedUser.password)
+  ) {
     req.session.user = { username };
-    res.cookie('console', consoleType);
+    res.cookie("console", consoleType);
     socketIdsAllowed.add(req.cookies[USER_SESSION_COOKIE]);
-    return res.redirect('/');
+    return res.redirect("/");
   }
   req.session.destroy(err => {
     res.redirect(LOGIN_ROUTE);
@@ -201,18 +222,22 @@ const wss = new WebSocket.Server({ server });
  * Once the requirements have been satisfied, clear any disconnect timeout timer related to
  * the session id in case the client has reconnected after a temporary disconnect
  */
-wss.on('connection', async (ws, req) => {
+wss.on("connection", async (ws, req) => {
   const remoteIp = getRemoteIp(req);
   cookieParserMiddleware(req, null, noop);
   const sid = req.cookies[USER_SESSION_COOKIE];
-  const consoleType = req.cookies['console'];
+  const consoleType = req.cookies["console"];
   if (current_connections >= MAX_CONNECTIONS) {
-    console.log(`Rejecting socket connection from ${remoteIp}: Too many connections`);
+    console.log(
+      `Rejecting socket connection from ${remoteIp}: Too many connections`
+    );
     ws.terminate();
     return;
   }
   if (!socketIdsAllowed.has(sid)) {
-    console.log(`Rejecting socket connection from ${remoteIp}: Invalid session ${sid}`);
+    console.log(
+      `Rejecting socket connection from ${remoteIp}: Invalid session ${sid}`
+    );
     ws.terminate();
     return;
   }
@@ -222,15 +247,15 @@ wss.on('connection', async (ws, req) => {
     delete disconnectTimers[sid];
   }
   ws.isAlive = true;
-  ws.on('pong', heartbeat);
+  ws.on("pong", heartbeat);
   const { container, stream } = await spawnTerminal(consoleType);
 
   const pid = container.id;
   terminals[remoteIp] = { pid, container };
   const terminalDataHandler = data => ws.send(data);
-  stream.on('data', terminalDataHandler);
+  stream.on("data", terminalDataHandler);
   const socketMessageHandler = message => stream.write(message);
-  ws.on('message', socketMessageHandler);
+  ws.on("message", socketMessageHandler);
 
   /**
    * On connection loss...
@@ -242,7 +267,7 @@ wss.on('connection', async (ws, req) => {
    */
   const closeEventHandler = async () => {
     delete terminals[remoteIp];
-    ws.removeEventListener('message', socketMessageHandler);
+    ws.removeEventListener("message", socketMessageHandler);
     decrementConnectionCount();
     disconnectTimers[sid] = setTimeout(() => {
       clearTimeout(disconnectTimers[sid]);
@@ -254,7 +279,7 @@ wss.on('connection', async (ws, req) => {
     await container.remove();
     console.log(`Session terminal pid ${pid} disposed for ${remoteIp}`);
   };
-  ws.once('close', closeEventHandler);
+  ws.once("close", closeEventHandler);
   incrementConnectionCount();
 });
 
@@ -272,13 +297,18 @@ setInterval(() => {
   });
 }, HEARTBEAT_INTERVAL);
 
-server.listen(PORT, HOST, () => console.log(`Server listening at ${HOST + ':' + PORT}`));
+server.listen(PORT, HOST, () =>
+  console.log(`Server listening at ${HOST + ":" + PORT}`)
+);
 
 function checkCredentials(req, res, next) {
-  if ((req.session && req.session.user && req.cookies[USER_SESSION_COOKIE]) || allowedPaths.has(req.path)) {
+  if (
+    (req.session && req.session.user && req.cookies[USER_SESSION_COOKIE]) ||
+    allowedPaths.has(req.path)
+  ) {
     return next();
   }
-  res.redirect('/login');
+  res.redirect("/login");
 }
 
 function noop() {}
@@ -299,15 +329,18 @@ async function spawnTerminal(consoleType) {
 function connectionLimit(max = MAX_CONNECTIONS) {
   return (req, res, next) => {
     if (current_connections >= MAX_CONNECTIONS) {
-      return res.status(502).json({ status: 'Max users reached', currentUsers: Object.keys(terminals) });
+      return res.status(502).json({
+        status: "Max users reached",
+        currentUsers: Object.keys(terminals)
+      });
     }
     next();
   };
 }
 
 function getRemoteIp(req) {
-  if (req.headers['x-forwarded-for']) {
-    return req.headers['x-forwarded-for'].split(/\s*,\s*/)[0];
+  if (req.headers["x-forwarded-for"]) {
+    return req.headers["x-forwarded-for"].split(/\s*,\s*/)[0];
   }
   return req.connection.remoteAddress;
 }

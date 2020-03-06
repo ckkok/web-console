@@ -1,8 +1,8 @@
 # Yet Another Web Console
 
-So your corporate network team has blocked a common desktop from remote access. Or you need to peer into a network for work purposes (of course) while they've sealed off every port to it without considering how that impacts your team. Or you feel like shells or REPL consoles need to be multiplayer. Whatever the case is, I'm not responsible for how you choose to use this or whether your enterprisey ass gets fired for entertaining the thought of using this.
+So your corporate network team has blocked a common desktop from remote access. Or you need to peer into a network for work purposes (of course) while they've sealed off every port to it without considering how that impacts your team. Or you feel like shells or REPL consoles need to be multiplayer. Whatever the case is, I'm not responsible for how you choose to use this or whether you get fired for even entertaining the thought of using this.
 
-All it is, is yet another web console. There are seriously tonnes of these things around. I just made one for the heck of it. Probably the only difference between this and the rest is the use of Docker containers for shell and REPL access.
+All it is, is yet another web console. There are seriously tonnes of these things around. I just made one for the heck of it. Probably the only difference between this and the rest is the use of Docker containers for shell and REPL access. It's by no means a production-ready system. For that, you would at least need to implement proper authentication system that is at the very least not susceptible to timing attacks, store user credentials in a database instead of a text file, use a distributed in-memory cache for session data, maybe have a better looking front-end, etc.
 
 ## Features
 
@@ -17,12 +17,7 @@ Currently stores a single user name and password in plain text (in the `credenti
 ## Requirements
 
 - NodeJS, tested from v10.15.3 onwards
-- Docker Desktop, tested with v2.2.0.3 (42716) onwards
-	- The following images are required for their respective shells/REPLs (configurable)
-		1. Python REPL: python:3.8-alpine
-		2. Java REPL: adoptopenjdk:11.0.6_10-jdk-hotspot-bionic
-		3. Bash Shell: ubuntu:latest
-		4. NodeJS REPL: node:lts-alpine
+- Docker Desktop, tested with v2.2.0.3 (42716) onwards - The following images are required for their respective shells/REPLs (configurable) 1. Python REPL: python:3.8-alpine 2. Java REPL: adoptopenjdk:11.0.6_10-jdk-hotspot-bionic 3. Bash Shell: ubuntu:latest 4. NodeJS REPL: node:lts-alpine
 
 ## Installation
 
