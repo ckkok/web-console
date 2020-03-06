@@ -17,7 +17,12 @@ Currently stores a single user name and password in plain text (in the `credenti
 ## Requirements
 
 - NodeJS, tested from v10.15.3 onwards
-- Docker Desktop, tested with v2.2.0.3 (42716) onwards - The following images are required for their respective shells/REPLs (configurable) 1. Python REPL: python:3.8-alpine 2. Java REPL: adoptopenjdk:11.0.6_10-jdk-hotspot-bionic 3. Bash Shell: ubuntu:latest 4. NodeJS REPL: node:lts-alpine
+- Docker Desktop, tested with v2.2.0.3 (42716) onwards
+- The following images are required for their respective shells/REPLs (configurable)
+  1. Python REPL: python:3.8-alpine
+  2. Java REPL: adoptopenjdk:11.0.6_10-jdk-hotspot-bionic
+  3. Bash Shell: ubuntu:latest
+  4. NodeJS REPL: node:lts-alpine
 
 ## Installation
 
