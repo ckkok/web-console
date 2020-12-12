@@ -23,27 +23,27 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "bufferutil": "^4.0.1",
-    "cookie-parser": "^1.4.4",
+    "bufferutil": "^4.0.2",
+    "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
-    "dockerode": "^3.1.0",
+    "dockerode": "^3.2.1",
     "express": "^4.17.1",
-    "express-session": "^1.17.0",
+    "express-session": "^1.17.1",
     "express-ws": "^4.0.0",
-    "helmet": "^3.21.2",
-    "memorystore": "^1.6.2",
+    "helmet": "^4.2.0",
+    "memorystore": "^1.6.4",
     "method-override": "^3.0.0",
     "multer": "^1.4.2",
-    "tar": "^6.0.1",
-    "utf-8-validate": "^5.0.2",
-    "ws": "^7.2.1",
-    "xterm": "^4.4.0",
-    "xterm-addon-attach": "^0.5.0",
-    "xterm-addon-fit": "^0.3.0",
-    "xterm-addon-search": "^0.5.0",
-    "xterm-addon-web-links": "^0.2.1"
+    "tar": "^6.0.5",
+    "utf-8-validate": "^5.0.3",
+    "ws": "^7.4.1",
+    "xterm": "^4.9.0",
+    "xterm-addon-attach": "^0.6.0",
+    "xterm-addon-fit": "^0.4.0",
+    "xterm-addon-search": "^0.7.0",
+    "xterm-addon-web-links": "^0.4.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.6"
   }
 }
